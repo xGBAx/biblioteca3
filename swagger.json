@@ -1,0 +1,364 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Biblioteca",
+    "version": "1.1.0",
+    "description": "API para gerenciamento de biblioteca: clientes, autores, livros, empréstimos e multas."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/cliente": {
+      "post": {
+        "summary": "Criar um novo cliente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Cliente" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente criado com sucesso",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cliente" } } }
+          },
+          "400": {
+            "description": "Erro de validação"
+          }
+        }
+      },
+      "get": {
+        "summary": "Listar todos os clientes",
+        "responses": {
+          "200": {
+            "description": "Lista de clientes",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Cliente" } } } }
+          },
+          "400": { "description": "Erro ao obter clientes" }
+        }
+      }
+    },
+    "/cliente/{id}": {
+      "get": {
+        "summary": "Buscar cliente por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente encontrado",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cliente" } } }
+          },
+          "404": { "description": "Cliente não encontrado" },
+          "400": { "description": "ID inválido" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar cliente por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { 
+            "application/json": { "schema": { "$ref": "#/components/schemas/Cliente" } } 
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cliente" } } }
+          },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "delete": {
+        "summary": "Excluir cliente por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Cliente excluído" },
+          "400": { "description": "Erro na exclusão" }
+        }
+      }
+    },
+
+    "/autor": {
+      "post": {
+        "summary": "Criar um novo autor",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/Autor" } }
+          }
+        },
+        "responses": {
+          "201": { "description": "Autor criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Autor" } } } },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "get": {
+        "summary": "Listar autores",
+        "responses": {
+          "200": {
+            "description": "Lista de autores",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Autor" } } } }
+          },
+          "400": { "description": "Erro ao obter autores" }
+        }
+      }
+    },
+    "/autor/{id}": {
+      "get": {
+        "summary": "Buscar autor por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Autor encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Autor" } } } },
+          "404": { "description": "Autor não encontrado" },
+          "400": { "description": "ID inválido" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar autor por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Autor" } } } },
+        "responses": {
+          "200": { "description": "Autor atualizado" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "delete": {
+        "summary": "Excluir autor por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Autor excluído" },
+          "400": { "description": "Erro na exclusão" }
+        }
+      }
+    },
+
+    "/livro": {
+      "post": {
+        "summary": "Criar um novo livro",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Livro" } } } },
+        "responses": {
+          "201": { "description": "Livro criado" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "get": {
+        "summary": "Listar livros",
+        "responses": {
+          "200": { 
+            "description": "Lista de livros",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Livro" } } } }
+          },
+          "400": { "description": "Erro ao obter livros" }
+        }
+      }
+    },
+    "/livro/{id}": {
+      "get": {
+        "summary": "Buscar livro por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Livro encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Livro" } } } },
+          "404": { "description": "Livro não encontrado" },
+          "400": { "description": "ID inválido" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar livro por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Livro" } } } },
+        "responses": {
+          "200": { "description": "Livro atualizado" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "delete": {
+        "summary": "Excluir livro por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Livro excluído" },
+          "400": { "description": "Erro na exclusão" }
+        }
+      }
+    },
+
+    "/emprestimo": {
+      "post": {
+        "summary": "Criar um novo empréstimo",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Emprestimo" } } } },
+        "responses": {
+          "201": { "description": "Empréstimo criado" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "get": {
+        "summary": "Listar empréstimos",
+        "responses": {
+          "200": { 
+            "description": "Lista de empréstimos",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Emprestimo" } } } }
+          },
+          "400": { "description": "Erro ao obter empréstimos" }
+        }
+      }
+    },
+    "/emprestimo/{id}": {
+      "get": {
+        "summary": "Buscar empréstimo por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Empréstimo encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Emprestimo" } } } },
+          "404": { "description": "Empréstimo não encontrado" },
+          "400": { "description": "ID inválido" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar empréstimo por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Emprestimo" } } } },
+        "responses": {
+          "200": { "description": "Empréstimo atualizado" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "delete": {
+        "summary": "Excluir empréstimo por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Empréstimo excluído" },
+          "400": { "description": "Erro na exclusão" }
+        }
+      }
+    },
+
+    "/multa": {
+      "post": {
+        "summary": "Criar uma nova multa",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Multa" } } } },
+        "responses": {
+          "201": { "description": "Multa criada" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "get": {
+        "summary": "Listar multas",
+        "responses": {
+          "200": {
+            "description": "Lista de multas",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Multa" } } } }
+          },
+          "400": { "description": "Erro ao obter multas" }
+        }
+      }
+    },
+    "/multa/{id}": {
+      "get": {
+        "summary": "Buscar multa por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Multa encontrada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Multa" } } } },
+          "404": { "description": "Multa não encontrada" },
+          "400": { "description": "ID inválido" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar multa por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Multa" } } } },
+        "responses": {
+          "200": { "description": "Multa atualizada" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "delete": {
+        "summary": "Excluir multa por ID",
+        "parameters": [{ "name": "id", "in": "path", "schema": { "type": "string" }, "required": true }],
+        "responses": {
+          "200": { "description": "Multa excluída" },
+          "400": { "description": "Erro na exclusão" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cliente": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "readOnly": true },
+          "nome": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "telefone": { "type": "string" }
+        },
+        "required": ["nome", "email"]
+      },
+      "Autor": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "readOnly": true },
+          "nome": { "type": "string" },
+          "nacionalidade": { "type": "string" }
+        },
+        "required": ["nome"]
+      },
+      "Livro": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "readOnly": true },
+          "titulo": { "type": "string" },
+          "autor": { "type": "string", "description": "ID do autor" },
+          "anoPublicacao": { "type": "integer" },
+          "disponivel": { "type": "boolean" }
+        },
+        "required": ["titulo", "autor"]
+      },
+      "Emprestimo": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "readOnly": true },
+          "cliente": { "type": "string", "description": "ID do cliente" },
+          "livro": { "type": "string", "description": "ID do livro" },
+          "dataEmprestimo": { "type": "string", "format": "date-time" },
+          "dataDevolucao": { "type": "string", "format": "date-time" }
+        },
+        "required": ["cliente", "livro", "dataEmprestimo"]
+      },
+      "Multa": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "readOnly": true },
+          "cliente": { "type": "string", "description": "ID do cliente" },
+          "valor": { "type": "number" },
+          "motivo": { "type": "string" }
+        },
+        "required": ["cliente", "valor"]
+      }
+    }
+  }
+}
