@@ -1,5 +1,5 @@
 // API Base URL
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'https://biblioteca3-5e8o.onrender.com';
 
 // In-memory storage for records
 const storage = {
