@@ -1,7 +1,6 @@
-// API Base URL
-const API_BASE = 'https://biblioteca3-5e8o.onrender.com';
+const API_BASE = 'https://biblioteca-api-m4jr.onrender.com';
 
-// In-memory storage for records
+// In-memory storage for records (não usado atualmente, mas pode ficar)
 const storage = {
     cliente: [],
     autor: [],
@@ -17,20 +16,18 @@ const pages = document.querySelectorAll('.page');
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
         const targetPage = link.getAttribute('data-page');
-        
+
         // Update active nav link
         navLinks.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
-        
+
         // Update active page
         pages.forEach(p => p.classList.remove('active'));
         document.getElementById(targetPage).classList.add('active');
-        
+
         // Reset tabs to first one
         const firstTab = document.querySelector(`#${targetPage} .tab`);
-        if (firstTab) {
-            firstTab.click();
-        }
+        if (firstTab) firstTab.click();
     });
 });
 
@@ -40,12 +37,10 @@ tabs.forEach(tab => {
     tab.addEventListener('click', () => {
         const targetTab = tab.getAttribute('data-tab');
         const parentPage = tab.closest('.page');
-        
-        // Update active tab
+
         parentPage.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
-        
-        // Update active tab content
+
         parentPage.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
         document.getElementById(targetTab).classList.add('active');
     });
@@ -55,398 +50,415 @@ tabs.forEach(tab => {
 function displayResponse(containerId, requestBody, response, status) {
     const container = document.getElementById(containerId);
     container.style.display = 'grid';
-    
     const statusClass = status >= 200 && status < 300 ? 'status-success' : 'status-error';
-    
+
     container.innerHTML = `
-        <div class="response-box">
-            <h4>Request Body</h4>
-            <pre>${JSON.stringify(requestBody, null, 2)}</pre>
-        </div>
-        <div class="response-box ${statusClass}">
-            <h4>Response (Status: ${status})</h4>
-            <pre>${JSON.stringify(response, null, 2)}</pre>
+        <div class="response-container">
+            <div class="status-badge ${statusClass}">Status: ${status}</div>
+            <div class="response-section">
+                <h4>Request Body</h4>
+                <pre>${JSON.stringify(requestBody, null, 2)}</pre>
+            </div>
+            <div class="response-section">
+                <h4>Response</h4>
+                <pre>${JSON.stringify(response, null, 2)}</pre>
+            </div>
         </div>
     `;
 }
 
-// Utility function to make API calls
-async function makeRequest(method, endpoint, body = null) {
-    try {
-        const options = {
-            method,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        
-        if (body) {
-            options.body = JSON.stringify(body);
-        }
-        
-        const response = await fetch(`${API_BASE}${endpoint}`, options);
-        const data = await response.json();
-        
-        return { data, status: response.status };
-    } catch (error) {
-        return { data: { error: error.message }, status: 500 };
-    }
-}
-
-// ===== CLIENTE CRUD =====
-
-// CREATE Cliente
-document.getElementById('clienteCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const body = {
-        nome: formData.get('nome'),
-        email: formData.get('email'),
-        telefone: formData.get('telefone'),
-        endereco: formData.get('endereco')
-    };
-    
-    const { data, status } = await makeRequest('POST', '/cliente', body);
-    displayResponse('clienteCreateResponse', body, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.cliente.push(data);
-        e.target.reset();
-    }
-});
-
-// READ Cliente - Todos
-document.getElementById('clienteGetAll').addEventListener('click', async () => {
-    const { data, status } = await makeRequest('GET', '/cliente');
-    displayResponse('clienteReadResponse', {}, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.cliente = Array.isArray(data) ? data : [data];
-        displayRecordsList('clienteRecordsList', storage.cliente);
-    }
-});
-
-// READ Cliente - Por ID
-document.getElementById('clienteGetById').addEventListener('click', async () => {
-    const id = document.getElementById('clienteGetId').value;
-    if (!id) return alert('Digite um ID');
-    
-    const { data, status } = await makeRequest('GET', `/cliente/${id}`);
-    displayResponse('clienteReadResponse', {}, data, status);
-});
-
-// UPDATE Cliente
-document.getElementById('clienteUpdateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const id = formData.get('id');
-    
-    const body = {};
-    if (formData.get('nome')) body.nome = formData.get('nome');
-    if (formData.get('email')) body.email = formData.get('email');
-    if (formData.get('telefone')) body.telefone = formData.get('telefone');
-    if (formData.get('endereco')) body.endereco = formData.get('endereco');
-    
-    const { data, status } = await makeRequest('PUT', `/cliente/${id}`, body);
-    displayResponse('clienteUpdateResponse', body, data, status);
-});
-
-// DELETE Cliente
-document.getElementById('clienteDeleteBtn').addEventListener('click', async () => {
-    const id = document.getElementById('clienteDeleteId').value;
-    if (!id) return alert('Digite um ID');
-    
-    if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
-    
-    const { data, status } = await makeRequest('DELETE', `/cliente/${id}`);
-    displayResponse('clienteDeleteResponse', {}, data, status);
-});
-
-// ===== AUTOR CRUD =====
-
-// CREATE Autor
-document.getElementById('autorCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const body = {
-        nome: formData.get('nome'),
-        nacionalidade: formData.get('nacionalidade'),
-        dataNascimento: formData.get('dataNascimento')
-    };
-    
-    const { data, status } = await makeRequest('POST', '/autor', body);
-    displayResponse('autorCreateResponse', body, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.autor.push(data);
-        e.target.reset();
-    }
-});
-
-// READ Autor - Todos
-document.getElementById('autorGetAll').addEventListener('click', async () => {
-    const { data, status } = await makeRequest('GET', '/autor');
-    displayResponse('autorReadResponse', {}, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.autor = Array.isArray(data) ? data : [data];
-        displayRecordsList('autorRecordsList', storage.autor);
-    }
-});
-
-// READ Autor - Por ID
-document.getElementById('autorGetById').addEventListener('click', async () => {
-    const id = document.getElementById('autorGetId').value;
-    if (!id) return alert('Digite um ID');
-    
-    const { data, status } = await makeRequest('GET', `/autor/${id}`);
-    displayResponse('autorReadResponse', {}, data, status);
-});
-
-// UPDATE Autor
-document.getElementById('autorUpdateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const id = formData.get('id');
-    
-    const body = {};
-    if (formData.get('nome')) body.nome = formData.get('nome');
-    if (formData.get('nacionalidade')) body.nacionalidade = formData.get('nacionalidade');
-    if (formData.get('dataNascimento')) body.dataNascimento = formData.get('dataNascimento');
-    
-    const { data, status } = await makeRequest('PUT', `/autor/${id}`, body);
-    displayResponse('autorUpdateResponse', body, data, status);
-});
-
-// DELETE Autor
-document.getElementById('autorDeleteBtn').addEventListener('click', async () => {
-    const id = document.getElementById('autorDeleteId').value;
-    if (!id) return alert('Digite um ID');
-    
-    if (!confirm('Tem certeza que deseja excluir este autor?')) return;
-    
-    const { data, status } = await makeRequest('DELETE', `/autor/${id}`);
-    displayResponse('autorDeleteResponse', {}, data, status);
-});
-
-// ===== LIVRO CRUD =====
-
-// CREATE Livro
-document.getElementById('livroCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const body = {
-        titulo: formData.get('titulo'),
-        autor: formData.get('autor'),
-        isbn: formData.get('isbn'),
-        quantidadeDisponivel: parseInt(formData.get('quantidadeDisponivel'))
-    };
-    
-    const { data, status } = await makeRequest('POST', '/livro', body);
-    displayResponse('livroCreateResponse', body, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.livro.push(data);
-        e.target.reset();
-    }
-});
-
-// READ Livro - Todos
-document.getElementById('livroGetAll').addEventListener('click', async () => {
-    const { data, status } = await makeRequest('GET', '/livro');
-    displayResponse('livroReadResponse', {}, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.livro = Array.isArray(data) ? data : [data];
-        displayRecordsList('livroRecordsList', storage.livro);
-    }
-});
-
-// READ Livro - Por ID
-document.getElementById('livroGetById').addEventListener('click', async () => {
-    const id = document.getElementById('livroGetId').value;
-    if (!id) return alert('Digite um ID');
-    
-    const { data, status } = await makeRequest('GET', `/livro/${id}`);
-    displayResponse('livroReadResponse', {}, data, status);
-});
-
-// UPDATE Livro
-document.getElementById('livroUpdateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const id = formData.get('id');
-    
-    const body = {};
-    if (formData.get('titulo')) body.titulo = formData.get('titulo');
-    if (formData.get('autor')) body.autor = formData.get('autor');
-    if (formData.get('isbn')) body.isbn = formData.get('isbn');
-    if (formData.get('quantidadeDisponivel')) body.quantidadeDisponivel = parseInt(formData.get('quantidadeDisponivel'));
-    
-    const { data, status } = await makeRequest('PUT', `/livro/${id}`, body);
-    displayResponse('livroUpdateResponse', body, data, status);
-});
-
-// DELETE Livro
-document.getElementById('livroDeleteBtn').addEventListener('click', async () => {
-    const id = document.getElementById('livroDeleteId').value;
-    if (!id) return alert('Digite um ID');
-    
-    if (!confirm('Tem certeza que deseja excluir este livro?')) return;
-    
-    const { data, status } = await makeRequest('DELETE', `/livro/${id}`);
-    displayResponse('livroDeleteResponse', {}, data, status);
-});
-
-// ===== EMPRESTIMO CRUD =====
-
-// CREATE Emprestimo
-document.getElementById('emprestimoCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const body = {
-        cliente: formData.get('cliente'),
-        livro: formData.get('livro'),
-        dataEmprestimo: formData.get('dataEmprestimo'),
-        dataDevolucaoPrevista: formData.get('dataDevolucaoPrevista')
-    };
-    
-    const { data, status } = await makeRequest('POST', '/emprestimo', body);
-    displayResponse('emprestimoCreateResponse', body, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.emprestimo.push(data);
-        e.target.reset();
-    }
-});
-
-// READ Emprestimo - Todos
-document.getElementById('emprestimoGetAll').addEventListener('click', async () => {
-    const { data, status } = await makeRequest('GET', '/emprestimo');
-    displayResponse('emprestimoReadResponse', {}, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.emprestimo = Array.isArray(data) ? data : [data];
-        displayRecordsList('emprestimoRecordsList', storage.emprestimo);
-    }
-});
-
-// READ Emprestimo - Por ID
-document.getElementById('emprestimoGetById').addEventListener('click', async () => {
-    const id = document.getElementById('emprestimoGetId').value;
-    if (!id) return alert('Digite um ID');
-    
-    const { data, status } = await makeRequest('GET', `/emprestimo/${id}`);
-    displayResponse('emprestimoReadResponse', {}, data, status);
-});
-
-// UPDATE Emprestimo
-document.getElementById('emprestimoUpdateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const id = formData.get('id');
-    
-    const body = {};
-    if (formData.get('cliente')) body.cliente = formData.get('cliente');
-    if (formData.get('livro')) body.livro = formData.get('livro');
-    if (formData.get('dataEmprestimo')) body.dataEmprestimo = formData.get('dataEmprestimo');
-    if (formData.get('dataDevolucaoPrevista')) body.dataDevolucaoPrevista = formData.get('dataDevolucaoPrevista');
-    
-    const { data, status } = await makeRequest('PUT', `/emprestimo/${id}`, body);
-    displayResponse('emprestimoUpdateResponse', body, data, status);
-});
-
-// DELETE Emprestimo
-document.getElementById('emprestimoDeleteBtn').addEventListener('click', async () => {
-    const id = document.getElementById('emprestimoDeleteId').value;
-    if (!id) return alert('Digite um ID');
-    
-    if (!confirm('Tem certeza que deseja excluir este empréstimo?')) return;
-    
-    const { data, status } = await makeRequest('DELETE', `/emprestimo/${id}`);
-    displayResponse('emprestimoDeleteResponse', {}, data, status);
-});
-
-// ===== MULTA CRUD =====
-
-// CREATE Multa
-document.getElementById('multaCreateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const body = {
-        cliente: formData.get('cliente'),
-        valor: parseFloat(formData.get('valor')),
-        motivo: formData.get('motivo')
-    };
-    
-    const { data, status } = await makeRequest('POST', '/multa', body);
-    displayResponse('multaCreateResponse', body, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.multa.push(data);
-        e.target.reset();
-    }
-});
-
-// READ Multa - Todos
-document.getElementById('multaGetAll').addEventListener('click', async () => {
-    const { data, status } = await makeRequest('GET', '/multa');
-    displayResponse('multaReadResponse', {}, data, status);
-    
-    if (status >= 200 && status < 300) {
-        storage.multa = Array.isArray(data) ? data : [data];
-        displayRecordsList('multaRecordsList', storage.multa);
-    }
-});
-
-// READ Multa - Por ID
-document.getElementById('multaGetById').addEventListener('click', async () => {
-    const id = document.getElementById('multaGetId').value;
-    if (!id) return alert('Digite um ID');
-    
-    const { data, status } = await makeRequest('GET', `/multa/${id}`);
-    displayResponse('multaReadResponse', {}, data, status);
-});
-
-// UPDATE Multa
-document.getElementById('multaUpdateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const id = formData.get('id');
-    
-    const body = {};
-    if (formData.get('cliente')) body.cliente = formData.get('cliente');
-    if (formData.get('valor')) body.valor = parseFloat(formData.get('valor'));
-    if (formData.get('motivo')) body.motivo = formData.get('motivo');
-    
-    const { data, status } = await makeRequest('PUT', `/multa/${id}`, body);
-    displayResponse('multaUpdateResponse', body, data, status);
-});
-
-// DELETE Multa
-document.getElementById('multaDeleteBtn').addEventListener('click', async () => {
-    const id = document.getElementById('multaDeleteId').value;
-    if (!id) return alert('Digite um ID');
-    
-    if (!confirm('Tem certeza que deseja excluir esta multa?')) return;
-    
-    const { data, status } = await makeRequest('DELETE', `/multa/${id}`);
-    displayResponse('multaDeleteResponse', {}, data, status);
-});
-
-// Utility function to display records list
-function displayRecordsList(containerId, records) {
+// Utility function to display records
+function displayRecords(containerId, records) {
     const container = document.getElementById(containerId);
-    
+    container.style.display = 'block';
+
     if (!records || records.length === 0) {
-        container.innerHTML = '<p>Nenhum registro encontrado.</p>';
+        container.innerHTML = '<p class="no-records">Nenhum registro encontrado.</p>';
         return;
     }
-    
+
     container.innerHTML = records.map(record => {
         const recordStr = Object.entries(record)
             .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
-            .join(', ');
-        return `<div class="record-item">${recordStr}</div>`;
+            .join('<br>');
+        return `<div class="record-card">${recordStr}</div>`;
     }).join('');
 }
+
+// ============================================
+// CLIENTE CRUD
+// ============================================
+
+document.getElementById('clienteCreateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+        nome: document.getElementById('clienteNome').value,
+        email: document.getElementById('clienteEmail').value,
+        telefone: document.getElementById('clienteTelefone').value
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/clientes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('cliente-create-response', data, responseData, response.status);
+        document.getElementById('clienteCreateForm').reset();
+    } catch (error) {
+        document.getElementById('cliente-create-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('clienteReadBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`${API_BASE}/clientes`);
+        const data = await response.json();
+        displayRecords('cliente-read-response', data);
+    } catch (error) {
+        document.getElementById('cliente-read-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('clienteUpdateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('clienteUpdateId').value;
+    const data = {};
+
+    if (document.getElementById('clienteUpdateNome').value) data.nome = document.getElementById('clienteUpdateNome').value;
+    if (document.getElementById('clienteUpdateEmail').value) data.email = document.getElementById('clienteUpdateEmail').value;
+    if (document.getElementById('clienteUpdateTelefone').value) data.telefone = document.getElementById('clienteUpdateTelefone').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/clientes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('cliente-update-response', data, responseData, response.status);
+        document.getElementById('clienteUpdateForm').reset();
+    } catch (error) {
+        document.getElementById('cliente-update-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('clienteDeleteForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('clienteDeleteId').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/clientes/${id}`, { method: 'DELETE' });
+        const responseData = await response.json();
+        displayResponse('cliente-delete-response', { id }, responseData, response.status);
+        document.getElementById('clienteDeleteForm').reset();
+    } catch (error) {
+        document.getElementById('cliente-delete-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+// ============================================
+// AUTOR CRUD (mantido igual)
+// ============================================
+
+document.getElementById('autorCreateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+        nome: document.getElementById('autorNome').value,
+        data_nascimento: document.getElementById('autorDataNascimento').value,
+        nacionalidade: document.getElementById('autorNacionalidade').value
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/autores`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('autor-create-response', data, responseData, response.status);
+        document.getElementById('autorCreateForm').reset();
+    } catch (error) {
+        document.getElementById('autor-create-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('autorReadBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`${API_BASE}/autores`);
+        const data = await response.json();
+        displayRecords('autor-read-response', data);
+    } catch (error) {
+        document.getElementById('autor-read-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('autorUpdateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('autorUpdateId').value;
+    const data = {};
+
+    if (document.getElementById('autorUpdateNome').value) data.nome = document.getElementById('autorUpdateNome').value;
+    if (document.getElementById('autorUpdateDataNascimento').value) data.data_nascimento = document.getElementById('autorUpdateDataNascimento').value;
+    if (document.getElementById('autorUpdateNacionalidade').value) data.nacionalidade = document.getElementById('autorUpdateNacionalidade').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/autores/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('autor-update-response', data, responseData, response.status);
+        document.getElementById('autorUpdateForm').reset();
+    } catch (error) {
+        document.getElementById('autor-update-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('autorDeleteForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('autorDeleteId').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/autores/${id}`, { method: 'DELETE' });
+        const responseData = await response.json();
+        displayResponse('autor-delete-response', { id }, responseData, response.status);
+        document.getElementById('autorDeleteForm').reset();
+    } catch (error) {
+        document.getElementById('autor-delete-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+// ============================================
+// LIVRO CRUD – COM DATA DE CADASTRO
+// ============================================
+
+document.getElementById('livroCreateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+        titulo: document.getElementById('livroTitulo').value,
+        autor_id: document.getElementById('livroAutorId').value,
+        isbn: document.getElementById('livroISBN').value,
+        genero: document.getElementById('livroGenero').value,
+        ano_publicacao: parseInt(document.getElementById('livroAnoPublicacao').value),
+        data_cadastro: document.getElementById('livroDataCadastro').value   // novo campo
+    };
+
+    fetch(`${API_BASE}/livros`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json().then(respData => ({ status: response.status, body: respData })))
+    .then(({ status, body }) => {
+        displayResponse('livro-create-response', data, body, status);
+        document.getElementById('livroCreateForm').reset();
+    })
+    .catch(error => {
+        document.getElementById('livro-create-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    });
+});
+
+document.getElementById('livroReadBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`${API_BASE}/livros`);
+        const data = await response.json();
+        displayRecords('livro-read-response', data);
+    } catch (error) {
+        document.getElementById('livro-read-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('livroUpdateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('livroUpdateId').value;
+    const data = {};
+
+    if (document.getElementById('livroUpdateTitulo').value) data.titulo = document.getElementById('livroUpdateTitulo').value;
+    if (document.getElementById('livroUpdateAutorId').value) data.autor_id = document.getElementById('livroUpdateAutorId').value;
+    if (document.getElementById('livroUpdateISBN').value) data.isbn = document.getElementById('livroUpdateISBN').value;
+    if (document.getElementById('livroUpdateGenero').value) data.genero = document.getElementById('livroUpdateGenero').value;
+    if (document.getElementById('livroUpdateAnoPublicacao').value) data.ano_publicacao = parseInt(document.getElementById('livroUpdateAnoPublicacao').value);
+    if (document.getElementById('livroUpdateDataCadastro').value) data.data_cadastro = document.getElementById('livroUpdateDataCadastro').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/livros/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('livro-update-response', data, responseData, response.status);
+        document.getElementById('livroUpdateForm').reset();
+    } catch (error) {
+        document.getElementById('livro-update-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('livroDeleteForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('livroDeleteId').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/livros/${id}`, { method: 'DELETE' });
+        const responseData = await response.json();
+        displayResponse('livro-delete-response', { id }, responseData, response.status);
+        document.getElementById('livroDeleteForm').reset();
+    } catch (error) {
+        document.getElementById('livro-delete-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+// ============================================
+// EMPRÉSTIMO CRUD (mantido)
+// ============================================
+
+document.getElementById('emprestimoCreateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+        cliente_id: document.getElementById('emprestimoClienteId').value,
+        livro_id: document.getElementById('emprestimoLivroId').value,
+        data_emprestimo: document.getElementById('emprestimoDataEmprestimo').value,
+        data_devolucao: document.getElementById('emprestimoDataDevolucao').value
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/emprestimos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('emprestimo-create-response', data, responseData, response.status);
+        document.getElementById('emprestimoCreateForm').reset();
+    } catch (error) {
+        document.getElementById('emprestimo-create-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('emprestimoReadBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`${API_BASE}/emprestimos`);
+        const data = await response.json();
+        displayRecords('emprestimo-read-response', data);
+    } catch (error) {
+        document.getElementById('emprestimo-read-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('emprestimoUpdateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('emprestimoUpdateId').value;
+    const data = {};
+
+    if (document.getElementById('emprestimoUpdateClienteId').value) data.cliente_id = document.getElementById('emprestimoUpdateClienteId').value;
+    if (document.getElementById('emprestimoUpdateLivroId').value) data.livro_id = document.getElementById('emprestimoUpdateLivroId').value;
+    if (document.getElementById('emprestimoUpdateDataEmprestimo').value) data.data_emprestimo = document.getElementById('emprestimoUpdateDataEmprestimo').value;
+    if (document.getElementById('emprestimoUpdateDataDevolucao').value) data.data_devolucao = document.getElementById('emprestimoUpdateDataDevolucao').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/emprestimos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('emprestimo-update-response', data, responseData, response.status);
+        document.getElementById('emprestimoUpdateForm').reset();
+    } catch (error) {
+        document.getElementById('emprestimo-update-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('emprestimoDeleteForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('emprestimoDeleteId').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/emprestimos/${id}`, { method: 'DELETE' });
+        const responseData = await response.json();
+        displayResponse('emprestimo-delete-response', { id }, responseData, response.status);
+        document.getElementById('emprestimoDeleteForm').reset();
+    } catch (error) {
+        document.getElementById('emprestimo-delete-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+// ============================================
+// MULTA CRUD (mantido)
+// ============================================
+
+document.getElementById('multaCreateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+        cliente_id: document.getElementById('multaClienteId').value,
+        valor: parseFloat(document.getElementById('multaValor').value),
+        data_multa: document.getElementById('multaDataMulta').value,
+        motivo: document.getElementById('multaMotivo').value
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/multas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('multa-create-response', data, responseData, response.status);
+        document.getElementById('multaCreateForm').reset();
+    } catch (error) {
+        document.getElementById('multa-create-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('multaReadBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`${API_BASE}/multas`);
+        const data = await response.json();
+        displayRecords('multa-read-response', data);
+    } catch (error) {
+        document.getElementById('multa-read-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('multaUpdateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('multaUpdateId').value;
+    const data = {};
+
+    if (document.getElementById('multaUpdateClienteId').value) data.cliente_id = document.getElementById('multaUpdateClienteId').value;
+    if (document.getElementById('multaUpdateValor').value) data.valor = parseFloat(document.getElementById('multaUpdateValor').value);
+    if (document.getElementById('multaUpdateDataMulta').value) data.data_multa = document.getElementById('multaUpdateDataMulta').value;
+    if (document.getElementById('multaUpdateMotivo').value) data.motivo = document.getElementById('multaUpdateMotivo').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/multas/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const responseData = await response.json();
+        displayResponse('multa-update-response', data, responseData, response.status);
+        document.getElementById('multaUpdateForm').reset();
+    } catch (error) {
+        document.getElementById('multa-update-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
+
+document.getElementById('multaDeleteForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('multaDeleteId').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/multas/${id}`, { method: 'DELETE' });
+        const responseData = await response.json();
+        displayResponse('multa-delete-response', { id }, responseData, response.status);
+        document.getElementById('multaDeleteForm').reset();
+    } catch (error) {
+        document.getElementById('multa-delete-response').innerHTML = `<p class="error">Erro: ${error.message}</p>`;
+    }
+});
