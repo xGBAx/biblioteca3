@@ -4,19 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Biblioteca - API Manager</title>
-    <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css">
+    
 </head>
 <body>
     <div class="container">
         <aside class="sidebar">
-            <h1>Biblioteca API</h1>
+            <h1>📚 Biblioteca API</h1>
             <nav>
                 <ul class="nav-menu">
-                    <li class="nav-item"><a class="nav-link active" data-page="cliente">Cliente</a></li>
-                    <li class="nav-item"><a class="nav-link" data-page="autor">Autor</a></li>
-                    <li class="nav-item"><a class="nav-link" data-page="livro">Livro</a></li>
-                    <li class="nav-item"><a class="nav-link" data-page="emprestimo">Empréstimo</a></li>
-                    <li class="nav-item"><a class="nav-link" data-page="multa">Multas</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link active" data-page="cliente">Cliente</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-page="autor">Autor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-page="livro">Livro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-page="emprestimo">Empréstimo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-page="multa">Multas</a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -36,70 +47,85 @@
                     <button class="tab" data-tab="cliente-delete">DELETE</button>
                 </div>
 
-                <!-- CREATE Cliente -->
                 <div id="cliente-create" class="tab-content active">
-                    <h3>Criar Cliente</h3>
-                    <form id="clienteCreateForm">
-                        <div class="form-group">
-                            <label for="clienteNome">Nome</label>
-                            <input type="text" id="clienteNome" placeholder="Nome completo" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="clienteEmail">Email</label>
-                            <input type="email" id="clienteEmail" placeholder="email@exemplo.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="clienteTelefone">Telefone</label>
-                            <input type="tel" id="clienteTelefone" placeholder="(00) 00000-0000" required>
-                        </div>
-                        <button type="submit" class="btn">Criar Cliente</button>
-                    </form>
-                    <div id="cliente-create-response"></div>
+                    <div class="card">
+                        <h3>POST /clientes</h3>
+                        <form id="clienteCreateForm">
+                            <div class="form-group">
+                                <label class="form-label">Nome</label>
+                                <input type="text" class="form-input" name="nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Telefone</label>
+                                <input type="text" class="form-input" name="telefone" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Enviar Requisição</button>
+                        </form>
+                        <div class="response-container" id="clienteCreateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- READ Cliente -->
                 <div id="cliente-read" class="tab-content">
-                    <h3>Listar Clientes</h3>
-                    <button id="clienteReadBtn" class="btn">Buscar Clientes</button>
-                    <div id="cliente-read-response"></div>
+                    <div class="card">
+                        <h3>GET /clientes</h3>
+                        <button class="btn btn-primary" id="clienteGetAll">Listar Todos</button>
+                        <div class="inline-form" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Buscar por ID</label>
+                                <input type="text" class="form-input" id="clienteGetId">
+                            </div>
+                            <button class="btn btn-secondary" id="clienteGetById">Buscar</button>
+                        </div>
+                        <div class="response-container" id="clienteReadResponse" style="display: none;"></div>
+                        <div class="records-list" id="clienteRecordsList"></div>
+                    </div>
                 </div>
 
-                <!-- UPDATE Cliente -->
                 <div id="cliente-update" class="tab-content">
-                    <h3>Atualizar Cliente</h3>
-                    <form id="clienteUpdateForm">
-                        <div class="form-group">
-                            <label for="clienteUpdateId">ID do Cliente</label>
-                            <input type="text" id="clienteUpdateId" placeholder="ID" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="clienteUpdateNome">Nome</label>
-                            <input type="text" id="clienteUpdateNome" placeholder="Novo nome">
-                        </div>
-                        <div class="form-group">
-                            <label for="clienteUpdateEmail">Email</label>
-                            <input type="email" id="clienteUpdateEmail" placeholder="Novo email">
-                        </div>
-                        <div class="form-group">
-                            <label for="clienteUpdateTelefone">Telefone</label>
-                            <input type="tel" id="clienteUpdateTelefone" placeholder="Novo telefone">
-                        </div>
-                        <button type="submit" class="btn">Atualizar Cliente</button>
-                    </form>
-                    <div id="cliente-update-response"></div>
+                    <div class="card">
+                        <h3>PUT /clientes/:id</h3>
+                        <form id="clienteUpdateForm">
+                            <div class="form-group">
+                                <label class="form-label">ID do Cliente</label>
+                                <input type="text" class="form-input" name="id" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nome</label>
+                                <input type="text" class="form-input" name="nome">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" name="email">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Telefone</label>
+                                <input type="text" class="form-input" name="telefone">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Endereço</label>
+                                <input type="text" class="form-input" name="endereco">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Atualizar</button>
+                        </form>
+                        <div class="response-container" id="clienteUpdateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- DELETE Cliente -->
                 <div id="cliente-delete" class="tab-content">
-                    <h3>Deletar Cliente</h3>
-                    <form id="clienteDeleteForm">
+                    <div class="card">
+                        <h3>DELETE /clientes/:id</h3>
                         <div class="form-group">
-                            <label for="clienteDeleteId">ID do Cliente</label>
-                            <input type="text" id="clienteDeleteId" placeholder="ID" required>
+                            <label class="form-label">ID do Cliente</label>
+                            <input type="text" class="form-input" id="clienteDeleteId">
                         </div>
-                        <button type="submit" class="btn btn-danger">Deletar Cliente</button>
-                    </form>
-                    <div id="cliente-delete-response"></div>
+                        <button class="btn btn-danger" id="clienteDeleteBtn">Excluir Cliente</button>
+                        <div class="response-container" id="clienteDeleteResponse" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -117,70 +143,80 @@
                     <button class="tab" data-tab="autor-delete">DELETE</button>
                 </div>
 
-                <!-- CREATE Autor -->
                 <div id="autor-create" class="tab-content active">
-                    <h3>Criar Autor</h3>
-                    <form id="autorCreateForm">
-                        <div class="form-group">
-                            <label for="autorNome">Nome</label>
-                            <input type="text" id="autorNome" placeholder="Nome completo" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="autorDataNascimento">Data de Nascimento</label>
-                            <input type="date" id="autorDataNascimento" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="autorNacionalidade">Nacionalidade</label>
-                            <input type="text" id="autorNacionalidade" placeholder="Ex: Brasileira" required>
-                        </div>
-                        <button type="submit" class="btn">Criar Autor</button>
-                    </form>
-                    <div id="autor-create-response"></div>
+                    <div class="card">
+                        <h3>POST /autores</h3>
+                        <form id="autorCreateForm">
+                            <div class="form-group">
+                                <label class="form-label">Nome</label>
+                                <input type="text" class="form-input" name="nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nacionalidade</label>
+                                <input type="text" class="form-input" name="nacionalidade" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data de Nascimento</label>
+                                <input type="date" class="form-input" name="dataNascimento" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar Requisição</button>
+                        </form>
+                        <div class="response-container" id="autorCreateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- READ Autor -->
                 <div id="autor-read" class="tab-content">
-                    <h3>Listar Autores</h3>
-                    <button id="autorReadBtn" class="btn">Buscar Autores</button>
-                    <div id="autor-read-response"></div>
+                    <div class="card">
+                        <h3>GET /autores</h3>
+                        <button class="btn btn-primary" id="autorGetAll">Listar Todos</button>
+                        <div class="inline-form" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Buscar por ID</label>
+                                <input type="text" class="form-input" id="autorGetId">
+                            </div>
+                            <button class="btn btn-secondary" id="autorGetById">Buscar</button>
+                        </div>
+                        <div class="response-container" id="autorReadResponse" style="display: none;"></div>
+                        <div class="records-list" id="autorRecordsList"></div>
+                    </div>
                 </div>
 
-                <!-- UPDATE Autor -->
                 <div id="autor-update" class="tab-content">
-                    <h3>Atualizar Autor</h3>
-                    <form id="autorUpdateForm">
-                        <div class="form-group">
-                            <label for="autorUpdateId">ID do Autor</label>
-                            <input type="text" id="autorUpdateId" placeholder="ID" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="autorUpdateNome">Nome</label>
-                            <input type="text" id="autorUpdateNome" placeholder="Novo nome">
-                        </div>
-                        <div class="form-group">
-                            <label for="autorUpdateDataNascimento">Data de Nascimento</label>
-                            <input type="date" id="autorUpdateDataNascimento">
-                        </div>
-                        <div class="form-group">
-                            <label for="autorUpdateNacionalidade">Nacionalidade</label>
-                            <input type="text" id="autorUpdateNacionalidade" placeholder="Nova nacionalidade">
-                        </div>
-                        <button type="submit" class="btn">Atualizar Autor</button>
-                    </form>
-                    <div id="autor-update-response"></div>
+                    <div class="card">
+                        <h3>PUT /autores/:id</h3>
+                        <form id="autorUpdateForm">
+                            <div class="form-group">
+                                <label class="form-label">ID do Autor</label>
+                                <input type="text" class="form-input" name="id" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nome</label>
+                                <input type="text" class="form-input" name="nome">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nacionalidade</label>
+                                <input type="text" class="form-input" name="nacionalidade">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data de Nascimento</label>
+                                <input type="date" class="form-input" name="dataNascimento">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Atualizar</button>
+                        </form>
+                        <div class="response-container" id="autorUpdateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- DELETE Autor -->
                 <div id="autor-delete" class="tab-content">
-                    <h3>Deletar Autor</h3>
-                    <form id="autorDeleteForm">
+                    <div class="card">
+                        <h3>DELETE /autores/:id</h3>
                         <div class="form-group">
-                            <label for="autorDeleteId">ID do Autor</label>
-                            <input type="text" id="autorDeleteId" placeholder="ID" required>
+                            <label class="form-label">ID do Autor</label>
+                            <input type="text" class="form-input" id="autorDeleteId">
                         </div>
-                        <button type="submit" class="btn btn-danger">Deletar Autor</button>
-                    </form>
-                    <div id="autor-delete-response"></div>
+                        <button class="btn btn-danger" id="autorDeleteBtn">Excluir Autor</button>
+                        <div class="response-container" id="autorDeleteResponse" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -198,98 +234,120 @@
                     <button class="tab" data-tab="livro-delete">DELETE</button>
                 </div>
 
-                <!-- CREATE Livro -->
-               <div id="livro-create" class="tab-content active">
-                <h3>Criar Livro</h3>
-                <form id="livroCreateForm">
-                    <div class="form-group">
-                        <label for="livroTitulo">Título</label>
-                        <input type="text" id="livroTitulo" placeholder="Título do livro" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="livroAutorId">ID do Autor</label>
-                        <input type="text" id="livroAutorId" placeholder="ID do autor" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="livroISBN">ISBN</label>
-                        <input type="text" id="livroISBN" placeholder="ISBN" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="livroGenero">Gênero</label>
-                        <input type="text" id="livroGenero" placeholder="Ex: Romance, Ficção Científica" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="livroAnoPublicacao">Ano de Publicação</label>
-                        <input type="number" id="livroAnoPublicacao" placeholder="Ex: 2024" min="1000" max="9999" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="livroDataCadastro">Data de Cadastro</label>
-                        <input type="date" id="livroDataCadastro" required>
-                    </div>
-                    <button type="submit" class="btn">Criar Livro</button>
-                </form>
-                <div id="livro-create-response"></div>
-            </div>
-
-                <!-- READ Livro -->
-                <div id="livro-read" class="tab-content">
-                    <h3>Listar Livros</h3>
-                    <button id="livroReadBtn" class="btn">Buscar Livros</button>
-                    <div id="livro-read-response"></div>
-                </div>
-
-                <!-- UPDATE Livro -->
-                <div id="livro-update" class="tab-content">
-                <h3>Atualizar Livro</h3>
-                <form id="livroUpdateForm">
-                    <div class="form-group">
-                        <label for="livroUpdateId">ID do Livro</label>
-                        <input type="text" id="livroUpdateId" placeholder="ID" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="livroUpdateTitulo">Título</label>
-                        <input type="text" id="livroUpdateTitulo" placeholder="Novo título">
-                    </div>
-                    <div class="form-group">
-                        <label for="livroUpdateAutorId">ID do Autor</label>
-                        <input type="text" id="livroUpdateAutorId" placeholder="Novo ID do autor">
-                    </div>
-                    <div class="form-group">
-                        <label for="livroUpdateISBN">ISBN</label>
-                        <input type="text" id="livroUpdateISBN" placeholder="Novo ISBN">
-                    </div>
-                    <div class="form-group">
-                        <label for="livroUpdateGenero">Gênero</label>
-                        <input type="text" id="livroUpdateGenero" placeholder="Ex: Romance, Ficção Científica">
-                    </div>
-                    <div class="form-group">
-                        <label for="livroUpdateAnoPublicacao">Ano de Publicação</label>
-                        <input type="number" id="livroUpdateAnoPublicacao" placeholder="Ex: 2024" min="1000" max="9999">
-                    </div>
-                    <div class="form-group">
-                        <label for="livroUpdateDataCadastro">Data de Cadastro</label>
-                        <input type="date" id="livroUpdateDataCadastro">
-                    </div>
-                    <button type="submit" class="btn">Atualizar Livro</button>
-                </form>
-                <div id="livro-update-response"></div>
-            </div>
-
-                <!-- DELETE Livro -->
-                <div id="livro-delete" class="tab-content">
-                    <h3>Deletar Livro</h3>
-                    <form id="livroDeleteForm">
+                <div id="livro-create" class="tab-content active">
+                <div class="card">
+                    <h3>POST /livros</h3>
+                    <form id="livroCreateForm">
                         <div class="form-group">
-                            <label for="livroDeleteId">ID do Livro</label>
-                            <input type="text" id="livroDeleteId" placeholder="ID" required>
+                            <label class="form-label">Título</label>
+                            <input type="text" class="form-input" name="titulo" placeholder="Ex: Marck Lawreance" required>
                         </div>
-                        <button type="submit" class="btn btn-danger">Deletar Livro</button>
+
+                        <div class="form-group">
+                            <label class="form-label">ID do Autor</label>
+                            <input type="text" class="form-input" name="autorId" placeholder="691a6b215288e09c815f479b"required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ano de Publicação</label>
+                            <input type="number" class="form-input" name="anoPublicacao" min="1440" max="2100" placeholder="Ex: 2015 "required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Gênero</label>
+                            <input type="text" class="form-input" name="genero" placeholder="Ex: Ficção, Romance, Terror..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">ISBN</label>
+                            <input type="text" class="form-input" name="isbn" placeholder="Ex: 9781417732470">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Quantidade em Estoque</label>
+                            <input type="number" class="form-input" name="quantidade" min="0" placeholder="Ex: 17 "required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Enviar Requisição</button>
                     </form>
-                    <div id="livro-delete-response"></div>
+                    <div class="response-container" id="livroCreateResponse" style="display: none;"></div>
+                </div>
+            </div>
+                <div id="livro-read" class="tab-content">
+                    <div class="card">
+                        <h3>GET /livros</h3>
+                        <button class="btn btn-primary" id="livroGetAll">Listar Todos</button>
+                        <div class="inline-form" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Buscar por ID</label>
+                                <input type="text" class="form-input" id="livroGetId">
+                            </div>
+                            <button class="btn btn-secondary" id="livroGetById">Buscar</button>
+                        </div>
+                        <div class="response-container" id="livroReadResponse" style="display: none;"></div>
+                        <div class="records-list" id="livroRecordsList"></div>
+                    </div>
+                </div>
+
+                <div id="livro-update" class="tab-content">
+                    <div class="card">
+                        <h3>PUT /livro</h3>
+                        <form id="livroUpdateForm">
+                            <div class="form-group">
+                                <label class="form-label">ID do Livro</label>
+                                <input type="text" class="form-input" name="id" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Título </label>
+                                <input type="text" class="form-input" name="titulo">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">ID do Autor </label>
+                                <input type="text" class="form-input" name="autorId">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Ano de Publicação </label>
+                                <input type="number" class="form-input" name="anoPublicacao" min="1440" max="2100">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Gênero </label>
+                                <input type="text" class="form-input" name="genero">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">ISBN </label>
+                                <input type="text" class="form-input" name="isbn">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Quantidade em Estoque </label>
+                                <input type="number" class="form-input" name="quantidade" min="0">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Atualizar Livro</button>
+                        </form>
+                        <div class="response-container" id="livroUpdateResponse" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div id="livro-delete" class="tab-content">
+                    <div class="card">
+                        <h3>DELETE /livros/:id</h3>
+                        <div class="form-group">
+                            <label class="form-label">ID do Livro</label>
+                            <input type="text" class="form-input" id="livroDeleteId">
+                        </div>
+                        <button class="btn btn-danger" id="livroDeleteBtn">Excluir Livro</button>
+                        <div class="response-container" id="livroDeleteResponse" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- EMPRÉSTIMO PAGE -->
+            <!-- EMPRESTIMO PAGE -->
             <div id="emprestimo" class="page">
                 <div class="page-header">
                     <h2>Empréstimo</h2>
@@ -303,78 +361,88 @@
                     <button class="tab" data-tab="emprestimo-delete">DELETE</button>
                 </div>
 
-                <!-- CREATE Empréstimo -->
                 <div id="emprestimo-create" class="tab-content active">
-                    <h3>Criar Empréstimo</h3>
-                    <form id="emprestimoCreateForm">
-                        <div class="form-group">
-                            <label for="emprestimoClienteId">ID do Cliente</label>
-                            <input type="text" id="emprestimoClienteId" placeholder="ID do cliente" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="emprestimoLivroId">ID do Livro</label>
-                            <input type="text" id="emprestimoLivroId" placeholder="ID do livro" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="emprestimoDataEmprestimo">Data do Empréstimo</label>
-                            <input type="date" id="emprestimoDataEmprestimo" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="emprestimoDataDevolucao">Data da Devolução</label>
-                            <input type="date" id="emprestimoDataDevolucao" required>
-                        </div>
-                        <button type="submit" class="btn">Criar Empréstimo</button>
-                    </form>
-                    <div id="emprestimo-create-response"></div>
+                    <div class="card">
+                        <h3>POST /emprestimos</h3>
+                        <form id="emprestimoCreateForm">
+                            <div class="form-group">
+                                <label class="form-label">ID do Cliente</label>
+                                <input type="text" class="form-input" name="cliente" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ID do Livro</label>
+                                <input type="text" class="form-input" name="livro" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data do Empréstimo</label>
+                                <input type="date" class="form-input" name="dataEmprestimo" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data de Devolução Prevista</label>
+                                <input type="date" class="form-input" name="dataDevolucaoPrevista" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar Requisição</button>
+                        </form>
+                        <div class="response-container" id="emprestimoCreateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- READ Empréstimo -->
                 <div id="emprestimo-read" class="tab-content">
-                    <h3>Listar Empréstimos</h3>
-                    <button id="emprestimoReadBtn" class="btn">Buscar Empréstimos</button>
-                    <div id="emprestimo-read-response"></div>
+                    <div class="card">
+                        <h3>GET /emprestimos</h3>
+                        <button class="btn btn-primary" id="emprestimoGetAll">Listar Todos</button>
+                        <div class="inline-form" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Buscar por ID</label>
+                                <input type="text" class="form-input" id="emprestimoGetId">
+                            </div>
+                            <button class="btn btn-secondary" id="emprestimoGetById">Buscar</button>
+                        </div>
+                        <div class="response-container" id="emprestimoReadResponse" style="display: none;"></div>
+                        <div class="records-list" id="emprestimoRecordsList"></div>
+                    </div>
                 </div>
 
-                <!-- UPDATE Empréstimo -->
                 <div id="emprestimo-update" class="tab-content">
-                    <h3>Atualizar Empréstimo</h3>
-                    <form id="emprestimoUpdateForm">
-                        <div class="form-group">
-                            <label for="emprestimoUpdateId">ID do Empréstimo</label>
-                            <input type="text" id="emprestimoUpdateId" placeholder="ID" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="emprestimoUpdateClienteId">ID do Cliente</label>
-                            <input type="text" id="emprestimoUpdateClienteId" placeholder="Novo ID do cliente">
-                        </div>
-                        <div class="form-group">
-                            <label for="emprestimoUpdateLivroId">ID do Livro</label>
-                            <input type="text" id="emprestimoUpdateLivroId" placeholder="Novo ID do livro">
-                        </div>
-                        <div class="form-group">
-                            <label for="emprestimoUpdateDataEmprestimo">Data do Empréstimo</label>
-                            <input type="date" id="emprestimoUpdateDataEmprestimo">
-                        </div>
-                        <div class="form-group">
-                            <label for="emprestimoUpdateDataDevolucao">Data da Devolução</label>
-                            <input type="date" id="emprestimoUpdateDataDevolucao">
-                        </div>
-                        <button type="submit" class="btn">Atualizar Empréstimo</button>
-                    </form>
-                    <div id="emprestimo-update-response"></div>
+                    <div class="card">
+                        <h3>PUT /emprestimos/:id</h3>
+                        <form id="emprestimoUpdateForm">
+                            <div class="form-group">
+                                <label class="form-label">ID do Empréstimo</label>
+                                <input type="text" class="form-input" name="id" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ID do Cliente</label>
+                                <input type="text" class="form-input" name="cliente">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ID do Livro</label>
+                                <input type="text" class="form-input" name="livro">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data do Empréstimo</label>
+                                <input type="date" class="form-input" name="dataEmprestimo">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data de Devolução Prevista</label>
+                                <input type="date" class="form-input" name="dataDevolucaoPrevista">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Atualizar</button>
+                        </form>
+                        <div class="response-container" id="emprestimoUpdateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- DELETE Empréstimo -->
                 <div id="emprestimo-delete" class="tab-content">
-                    <h3>Deletar Empréstimo</h3>
-                    <form id="emprestimoDeleteForm">
+                    <div class="card">
+                        <h3>DELETE /emprestimos/:id</h3>
                         <div class="form-group">
-                            <label for="emprestimoDeleteId">ID do Empréstimo</label>
-                            <input type="text" id="emprestimoDeleteId" placeholder="ID" required>
+                            <label class="form-label">ID do Empréstimo</label>
+                            <input type="text" class="form-input" id="emprestimoDeleteId">
                         </div>
-                        <button type="submit" class="btn btn-danger">Deletar Empréstimo</button>
-                    </form>
-                    <div id="emprestimo-delete-response"></div>
+                        <button class="btn btn-danger" id="emprestimoDeleteBtn">Excluir Empréstimo</button>
+                        <div class="response-container" id="emprestimoDeleteResponse" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -392,78 +460,80 @@
                     <button class="tab" data-tab="multa-delete">DELETE</button>
                 </div>
 
-                <!-- CREATE Multa -->
                 <div id="multa-create" class="tab-content active">
-                    <h3>Criar Multa</h3>
-                    <form id="multaCreateForm">
-                        <div class="form-group">
-                            <label for="multaClienteId">ID do Cliente</label>
-                            <input type="text" id="multaClienteId" placeholder="ID do cliente" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="multaValor">Valor</label>
-                            <input type="number" id="multaValor" placeholder="0.00" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="multaDataMulta">Data da Multa</label>
-                            <input type="date" id="multaDataMulta" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="multaMotivo">Motivo</label>
-                            <input type="text" id="multaMotivo" placeholder="Motivo da multa" required>
-                        </div>
-                        <button type="submit" class="btn">Criar Multa</button>
-                    </form>
-                    <div id="multa-create-response"></div>
+                    <div class="card">
+                        <h3>POST /multas</h3>
+                        <form id="multaCreateForm">
+                            <div class="form-group">
+                                <label class="form-label">ID do Cliente</label>
+                                <input type="text" class="form-input" name="cliente" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Valor</label>
+                                <input type="number" step="0.01" class="form-input" name="valor" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Motivo</label>
+                                <input type="text" class="form-input" name="motivo" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar Requisição</button>
+                        </form>
+                        <div class="response-container" id="multaCreateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- READ Multa -->
                 <div id="multa-read" class="tab-content">
-                    <h3>Listar Multas</h3>
-                    <button id="multaReadBtn" class="btn">Buscar Multas</button>
-                    <div id="multa-read-response"></div>
+                    <div class="card">
+                        <h3>GET /multas</h3>
+                        <button class="btn btn-primary" id="multaGetAll">Listar Todos</button>
+                        <div class="inline-form" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Buscar por ID</label>
+                                <input type="text" class="form-input" id="multaGetId">
+                            </div>
+                            <button class="btn btn-secondary" id="multaGetById">Buscar</button>
+                        </div>
+                        <div class="response-container" id="multaReadResponse" style="display: none;"></div>
+                        <div class="records-list" id="multaRecordsList"></div>
+                    </div>
                 </div>
 
-                <!-- UPDATE Multa -->
                 <div id="multa-update" class="tab-content">
-                    <h3>Atualizar Multa</h3>
-                    <form id="multaUpdateForm">
-                        <div class="form-group">
-                            <label for="multaUpdateId">ID da Multa</label>
-                            <input type="text" id="multaUpdateId" placeholder="ID" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="multaUpdateClienteId">ID do Cliente</label>
-                            <input type="text" id="multaUpdateClienteId" placeholder="Novo ID do cliente">
-                        </div>
-                        <div class="form-group">
-                            <label for="multaUpdateValor">Valor</label>
-                            <input type="number" id="multaUpdateValor" placeholder="0.00" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="multaUpdateDataMulta">Data da Multa</label>
-                            <input type="date" id="multaUpdateDataMulta">
-                        </div>
-                        <div class="form-group">
-                            <label for="multaUpdateMotivo">Motivo</label>
-                            <input type="text" id="multaUpdateMotivo" placeholder="Novo motivo">
-                        </div>
-                        <button type="submit" class="btn">Atualizar Multa</button>
-                    </form>
-                    <div id="multa-update-response"></div>
+                    <div class="card">
+                        <h3>PUT /multas/:id</h3>
+                        <form id="multaUpdateForm">
+                            <div class="form-group">
+                                <label class="form-label">ID da Multa</label>
+                                <input type="text" class="form-input" name="id" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ID do Cliente</label>
+                                <input type="text" class="form-input" name="cliente">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Valor</label>
+                                <input type="number" step="0.01" class="form-input" name="valor">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Motivo</label>
+                                <input type="text" class="form-input" name="motivo">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Atualizar</button>
+                        </form>
+                        <div class="response-container" id="multaUpdateResponse" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- DELETE Multa -->
                 <div id="multa-delete" class="tab-content">
-                    <h3>Deletar Multa</h3>
-                    <form id="multaDeleteForm">
+                    <div class="card">
+                        <h3>DELETE /multas/:id</h3>
                         <div class="form-group">
-                            <label for="multaDeleteId">ID da Multa</label>
-                            <input type="text" id="multaDeleteId" placeholder="ID" required>
+                            <label class="form-label">ID da Multa</label>
+                            <input type="text" class="form-input" id="multaDeleteId">
                         </div>
-                        <button type="submit" class="btn btn-danger">Deletar Multa</button>
-                    </form>
-                    <div id="multa-delete-response"></div>
+                        <button class="btn btn-danger" id="multaDeleteBtn">Excluir Multa</button>
+                        <div class="response-container" id="multaDeleteResponse" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
         </main>
